@@ -1,17 +1,29 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { View, Text, FlatList, SafeAreView, TextInput, StyleSheet } from 'react-native';
 import productData from './data.json';
-import Card from './productCard'
-const numColumns = 2;
+import Card from './productCard';
+import SearchBar from './SearchBar'
+
 const App = () => {
   
+  const [list, setList] = useState(productData)
+  const numColumns = 2;
+  const handleSearch = text => {
+    const filteredList = productData.filter(product => {
+      const searchedText = text.toLowerCase();
+      const currentTitle = product.title.toLowerCase();
+      return currentTitle.indexOf(searchedText) > -1;
+    });
+    setList(filteredList);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>PATIKASTORE</Text>
-      <TextInput style={ styles.textinput } placeholder='Ara...'/>
+      <SearchBar placeholder=' Ara... ' onChangeText={handleSearch}/>
       <FlatList
         //keyExtractor={item=> item.toString()}
-        data={productData}
+        data={list}
         renderItem={({ item }) => <Card card={item} />}
         numColumns={numColumns}
       />
@@ -26,11 +38,7 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: 'white',
     },
-    textinput: {
-      backgroundColor: '#eceff1',
-      borderRadius: 10,
-      margin: 10
-    },
+    
     title: {
       fontWeight: 'bold',
       fontSize: 32,
